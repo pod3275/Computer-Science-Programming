@@ -1,0 +1,84 @@
+free cha: channel.
+free c1: channel.
+free c2: channel.
+free c3: channel.
+
+set attacker = active.
+
+type pkey.
+type skey.
+type G.
+type exponent.
+
+(* Signatures *)
+
+fun sign(G, skey): bitstring.
+fun pk(skey):pkey.
+reduc forall m: G, k: skey; getmess(sign(m,k)) = m.
+reduc forall m: G, k: skey; checksign(sign(m,k), pk(k)) = m.
+
+(* Shared key encryption *)
+
+fun enc(bitstring, G): bitstring.
+reduc forall x: bitstring, y: G; dec(enc(x,y),y) = x.
+
+(* Diffie-Hellman *)
+
+const g: G.
+fun exp(G, exponent): G.
+equation forall x: exponent, y: exponent; exp(exp(g, x), y) = exp(exp(g, y), x).
+
+(* Test whether s is secret *)
+
+free s: bitstring [private].
+query attacker(s).
+
+(* The process *)
+
+let Alice(skA: skey, pkA: pkey, pkB: pkey, pkC: pkey) =
+    in(cha,pkX: pkey);
+	 new a: exponent;
+   out(c1,(sign(exp(g, a), skA), pkA));
+   in(c3,ma1: bitstring);
+   let xa1 = checksign(ma1, pkX) in
+   let k = exp(xa1,a) in
+  	 if pkX = pkA then
+      out(c1,enc(s,k));
+      out(c3,enc(s,k)).
+
+
+let Bob(skB: skey, pkB: pkey, pkA: pkey, pkC: pkey) =
+   new b: exponent;
+   in(c1,(mb1: bitstring, pkY1: pkey));
+	 let xb1 = checksign(mb1, pkY1) in
+   out(c2,(mb1, pkY1, sign(exp(g, b), skB), pkB, sign(exp(xb1, b), skB), pkB));
+   in(c2,(mb2: bitstring, pkY2: pkey));
+   let xb2 = checksign(mb2,pkY2) in
+   let k = exp(xb2,b) in
+   in(c1,mb3: bitstring);
+   let s2 = dec(mb3,k) in 0.
+
+
+let Carol(skC: skey, pkC: pkey, pkA: pkey, pkB: pkey) =
+   new c: exponent;
+   in(c2, (mc1: bitstring, pkZ1: pkey, mc2: bitstring, pkZ2: pkey, mc3: bitstring, pkZ3: pkey));
+   let xc1 = checksign(mc1, pkZ1) in
+   let xc2 = checksign(mc2, pkZ2) in
+   let xc3 = checksign(mc3, pkZ3) in
+   let k = exp(xc3, c) in
+   out(c3,sign(exp(xc2,c), skC));
+   out(c2,(sign(exp(xc1,c), skC), pkC));
+   in(c3, mc4: bitstring);
+   let s3 = dec(mc4,k) in 0.
+
+process
+	new skA: skey;
+	let pkA = pk(skA) in
+  out(cha,pkA);
+	new skB: skey;
+	let pkB = pk(skB) in
+  out(cha,pkB);
+	new skC: skey;
+	let pkC = pk(skC) in
+  out(cha,pkC);
+	Alice(skA, pkA, pkB, pkC) |  Bob(skB, pkB, pkA, pkC) | Carol(skC, pkC, pkA, pkB)

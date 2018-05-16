@@ -1,0 +1,63 @@
+(* Channel *)
+free c1: channel.
+free c2: channel.
+free c3: channel.
+
+type G.
+type exponent.
+
+(* Passive adversary *)
+set attacker = passive.
+
+(* Shared key encryption *)
+
+fun enc(bitstring, G): bitstring.
+reduc forall x: bitstring, y: G; dec(enc(x,y),y) = x.
+
+(* Diffie-Hellman *)
+
+const g: G.
+fun exp(G, exponent): G.
+equation forall x: exponent, y: exponent; exp(exp(g, x), y) = exp(exp(g, y), x).
+equation forall x: exponent, y: exponent, z: exponent; exp(exp(exp(g, x), y), z) = exp(exp(exp(g, x), z), y).
+equation forall x: exponent, y: exponent, z: exponent; exp(exp(exp(g, x), y), z) = exp(exp(exp(g, z), y), x).
+
+(* Test whether s is secret *)
+
+free s: bitstring [private].
+query attacker(s).
+
+(* The process *)
+
+let Alice =
+  new a: exponent;
+  out(c1,exp(g, a));
+  in(c3,xa1: G);
+  let k = exp(xa1,a) in
+  out(c1, enc(s,k));
+  in(c3,xa2: bitstring);
+  let s4 = dec(xa2,k) in
+  out(c1, s4).
+
+let Bob =
+  new b: exponent;
+  in(c1,xb1: G);
+  out(c2, (xb1, exp(g,b), exp(xb1,b)));
+  in(c2,xb2: G);
+  let k = exp(xb2,b) in
+  in(c1,m: bitstring);
+  let s2 = dec(m,k) in
+  out(c2, enc(s2,k)).
+
+let Carol =
+  new c: exponent;
+  in(c2,(xc1:G, xc2:G, xc3:G));
+  let k = exp(xc3,c) in
+  out(c3,exp(xc2,c));
+  out(c2,exp(xc1,c));
+  in(c2,m:bitstring);
+  let s3 = dec(m,k) in
+  out(c3, enc(s3,k)).
+
+
+process Alice | Bob | Carol
