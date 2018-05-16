@@ -33,7 +33,22 @@
    (7) Points for the soccer teams
    
 ### 3. CG (Computer Graphics)
+ - 2016년 1학기 성균관대학교 이성길교수님 컴퓨터그래픽스 수업.
+ 
+   (1) Vector and Matrix Library
+   
 ### 4. CN (Computer Networks)
+ - 2017년 1학기 성균관대학교 최형기교수님 컴퓨터네트웍개론 수업.
+ 
+   (1) Wireshark, Traceroute and Questions
+   
+   (2) Stripping IP packets
+   
+   (3) IPv6 Socket Programming
+   
 ### 5. DB (Database)
-### 6. OS (Operating System)
-### 7. 
+ - 2016년 1학기 성균관대학교 김응모교수님 데이터베이스 수업.
+ 
+   (1) Hospital Database Construction
+
+### 6. 
