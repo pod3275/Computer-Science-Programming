@@ -1,0 +1,478 @@
+CREATE SCHEMA HOSPITAL;
+USE HOSPITAL;
+
+CREATE TABLE EMP(
+id INT NOT NULL,
+name CHAR(20),
+work_year INT,
+PRIMARY KEY (id)
+);
+
+CREATE TABLE DEPT(
+dept_name CHAR(20) NOT NULL,
+location_num INT,
+telephone CHAR(20),
+PRIMARY KEY (dept_name)
+);
+
+CREATE TABLE DOCTOR(
+doctor_id INT NOT NULL,
+dept_name CHAR(20),
+super_d_id INT,
+PRIMARY KEY (doctor_id),
+FOREIGN KEY (dept_name) REFERENCES DEPT(dept_name)
+	on update cascade,
+FOREIGN KEY (doctor_id) REFERENCES EMP(id)
+	on update cascade
+    on delete cascade,
+FOREIGN KEY (super_d_id) REFERENCES DOCTOR(doctor_id)
+	on update cascade
+    on delete set null
+);
+
+CREATE TABLE NURSE(
+nurse_id INT NOT NULL,
+dept_name CHAR(20),
+super_n_id INT,
+PRIMARY KEY (nurse_id),
+FOREIGN KEY (nurse_id) REFERENCES EMP(id)
+	on update cascade
+    on delete cascade,
+FOREIGN KEY (dept_name) REFERENCES DEPT(dept_name)
+	on update cascade,
+FOREIGN KEY (super_n_id) REFERENCES NURSE(nurse_id)
+	on update cascade
+    on delete set null
+);
+
+CREATE TABLE MANAGE_N_P(
+nurse_id INT NOT NULL,
+PRIMARY KEY (nurse_id),
+FOREIGN KEY (nurse_id) REFERENCES NURSE(nurse_id)
+	on update cascade
+);
+
+CREATE TABLE PATIENT(
+RRN CHAR(20) NOT NULL,
+patient_name CHAR(20),
+age INT,
+sex CHAR(5),
+insurance_code CHAR(20),
+doctor_id INT,
+PRIMARY KEY (RRN),
+FOREIGN KEY (doctor_id) REFERENCES DOCTOR(doctor_id)
+	on update cascade
+);
+
+
+CREATE TABLE ROOM(
+room_num INT NOT NULL,
+room_telephone CHAR(20),
+nurse_id INT,
+PRIMARY KEY (room_num),
+FOREIGN KEY (nurse_id) REFERENCES NURSE(nurse_id)
+	on update cascade
+);
+
+CREATE TABLE SURGERY(
+surgery_num INT NOT NULL,
+surgery_name CHAR(20),
+patient_RRN CHAR(20),
+PRIMARY KEY (surgery_num),
+FOREIGN KEY (patient_RRN) REFERENCES PATIENT(RRN)
+	on update cascade
+);
+
+
+CREATE TABLE SURGE_RES(
+surgery_num INT NOT NULL,
+date CHAR(20),
+time INT,
+p_condition CHAR(10),
+PRIMARY KEY (surgery_num),
+FOREIGN KEY (surgery_num) REFERENCES SURGERY(surgery_num)
+	on update cascade
+);
+
+
+ALTER TABLE DEPT ADD COLUMN officer_id INT, ADD FOREIGN KEY (officer_id) REFERENCES DOCTOR(doctor_id)
+	on update cascade;
+
+ALTER TABLE DOCTOR ADD COLUMN surgery_num INT, ADD FOREIGN KEY (surgery_num) REFERENCES SURGERY(surgery_num)
+	on update cascade;
+
+ALTER TABLE MANAGE_N_P ADD COLUMN patient_RRN CHAR(20) NOT NULL, ADD FOREIGN KEY (patient_RRN) REFERENCES PATIENT(RRN)
+	on update cascade;
+
+ALTER TABLE MANAGE_N_P DROP PRIMARY KEY, ADD PRIMARY KEY (nurse_id, patient_RRN);
+    
+ALTER TABLE PATIENT ADD room_num INT, ADD FOREIGN KEY (room_num) REFERENCES ROOM(room_num)
+	on update cascade;
+
+
+
+
+
+
+INSERT INTO EMP VALUES ('201310','김일영',10);
+INSERT INTO EMP VALUES ('201311','김일일',7);
+INSERT INTO EMP VALUES ('201312','김일이',5);
+INSERT INTO EMP VALUES ('201313','김일삼',8);
+INSERT INTO EMP VALUES ('201314','김일사',2);
+INSERT INTO EMP VALUES ('201315','김일오',1);
+INSERT INTO EMP VALUES ('201316','김일육',13);
+INSERT INTO EMP VALUES ('201317','김일칠',16);
+INSERT INTO EMP VALUES ('201318','김일팔',12);
+INSERT INTO EMP VALUES ('201319','김일구',13);
+INSERT INTO EMP VALUES ('201320','김이십',8);
+INSERT INTO EMP VALUES ('201321','김이일',20);
+INSERT INTO EMP VALUES ('201322','김이이',19);
+INSERT INTO EMP VALUES ('201323','김이삼',4);
+INSERT INTO EMP VALUES ('201324','김이사',10);
+INSERT INTO EMP VALUES ('201325','김이오',4);
+INSERT INTO EMP VALUES ('201326','김이육',2);
+INSERT INTO EMP VALUES ('201327','김이칠',12);
+INSERT INTO EMP VALUES ('201328','김이팔',1);
+INSERT INTO EMP VALUES ('201329','김이구',3);
+INSERT INTO EMP VALUES ('201330','김삼영',3);
+INSERT INTO EMP VALUES ('201331','김삼일',2);
+INSERT INTO EMP VALUES ('201332','김삼이',5);
+INSERT INTO EMP VALUES ('201333','김삼삼',8);
+INSERT INTO EMP VALUES ('201334','김삼사',16);
+INSERT INTO EMP VALUES ('201335','김삼오',21);
+INSERT INTO EMP VALUES ('201336','김삼육',22);
+INSERT INTO EMP VALUES ('201337','김삼칠',9);
+INSERT INTO EMP VALUES ('201338','김삼팔',13);
+INSERT INTO EMP VALUES ('201339','김삼구',12);
+
+
+INSERT INTO EMP VALUES ('201410','이일영',10);
+INSERT INTO EMP VALUES ('201411','이일일',7);
+INSERT INTO EMP VALUES ('201412','이일이',5);
+INSERT INTO EMP VALUES ('201413','이일삼',8);
+INSERT INTO EMP VALUES ('201414','이일사',2);
+INSERT INTO EMP VALUES ('201415','이일오',1);
+INSERT INTO EMP VALUES ('201416','이일육',13);
+INSERT INTO EMP VALUES ('201417','이일칠',16);
+INSERT INTO EMP VALUES ('201418','이일팔',12);
+INSERT INTO EMP VALUES ('201419','이일구',13);
+INSERT INTO EMP VALUES ('201420','이이십',8);
+INSERT INTO EMP VALUES ('201421','이이일',20);
+INSERT INTO EMP VALUES ('201422','이이이',19);
+INSERT INTO EMP VALUES ('201423','이이삼',4);
+INSERT INTO EMP VALUES ('201424','이이사',10);
+INSERT INTO EMP VALUES ('201425','이이오',4);
+INSERT INTO EMP VALUES ('201426','이이육',2);
+INSERT INTO EMP VALUES ('201427','이이칠',12);
+INSERT INTO EMP VALUES ('201428','이이팔',1);
+INSERT INTO EMP VALUES ('201429','이이구',3);
+
+
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('내과', '1', '912-1111');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('흉부외과', '2', '912-2222');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('신경외과', '3', '912-3333');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('정형외과', '4', '912-4444');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('성형외과', '5', '912-5555');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('산부인과', '6', '912-6666');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('피부과', '7', '912-7777');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('비뇨기과', '8', '912-8888');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('안과', '9', '912-9999');
+INSERT INTO DEPT (dept_name, location_num, telephone)
+ VALUES ('신경과', '10', '912-1010');
+ 
+ 
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201310','내과','201310');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201311','내과','201310');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201312','내과','201310');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201313','흉부외과','201313');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201314','흉부외과','201313');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201315','흉부외과','201313');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201316','신경외과','201316');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201317','신경외과','201316');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201318','신경외과','201316');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201319','정형외과','201319');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201320','정형외과','201319');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201321','정형외과','201319');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201322','성형외과','201322');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201323','성형외과','201322');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201324','성형외과','201322');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201325','산부인과','201325');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201326','산부인과','201325');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201327','산부인과','201325');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201328','피부과','201328');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201329','피부과','201328');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201330','피부과','201328');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201331','비뇨기과','201331');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201332','비뇨기과','201331');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201333','비뇨기과','201331');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201334','안과','201334');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201335','안과','201334');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201336','안과','201334');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201337','신경과','201337');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201338','신경과','201337');
+INSERT INTO doctor (doctor_id, dept_name, super_d_id)
+ VALUES ('201339','신경과','201337');
+ 
+ 
+UPDATE DEPT SET officer_id = '201310'
+	WHERE dept_name = '내과';
+UPDATE DEPT SET officer_id = '201313'
+	WHERE dept_name = '흉부외과';
+UPDATE DEPT SET officer_id = '201316'
+	WHERE dept_name = '신경외과';
+UPDATE DEPT SET officer_id = '201319'
+	WHERE dept_name = '정형외과';
+UPDATE DEPT SET officer_id = '201322'
+	WHERE dept_name = '성형외과';
+UPDATE DEPT SET officer_id = '201325'
+	WHERE dept_name = '산부인과';
+UPDATE DEPT SET officer_id = '201328'
+	WHERE dept_name = '피부과';
+UPDATE DEPT SET officer_id = '201331'
+	WHERE dept_name = '비뇨기과';
+UPDATE DEPT SET officer_id = '201334'
+	WHERE dept_name = '안과';
+UPDATE DEPT SET officer_id = '201337'
+	WHERE dept_name = '신경과';
+    
+    
+INSERT INTO nurse
+ VALUES ('201410','내과','201410');
+INSERT INTO nurse
+ VALUES ('201411','내과','201410');
+INSERT INTO nurse
+ VALUES ('201412','흉부외과','201412');
+INSERT INTO nurse
+ VALUES ('201413','흉부외과','201412');
+INSERT INTO nurse
+ VALUES ('201414','신경외과','201414');
+INSERT INTO nurse
+ VALUES ('201415','신경외과','201414');
+INSERT INTO nurse
+ VALUES ('201416','정형외과','201416');
+INSERT INTO nurse
+ VALUES ('201417','정형외과','201416');
+INSERT INTO nurse
+ VALUES ('201418','성형외과','201418');
+INSERT INTO nurse
+ VALUES ('201419','성형외과','201418');
+INSERT INTO nurse
+ VALUES ('201420','산부인과','201420');
+INSERT INTO nurse
+ VALUES ('201421','산부인과','201420');
+INSERT INTO nurse
+ VALUES ('201422','피부과','201422');
+INSERT INTO nurse
+ VALUES ('201423','피부과','201422');
+INSERT INTO nurse
+ VALUES ('201424','비뇨기과','201424');
+INSERT INTO nurse
+ VALUES ('201425','비뇨기과','201424');
+INSERT INTO nurse
+ VALUES ('201426','안과','201426');
+INSERT INTO nurse
+ VALUES ('201427','안과','201426');
+INSERT INTO nurse
+ VALUES ('201428','신경과','201428');
+INSERT INTO nurse
+ VALUES ('201429','신경과','201428');
+
+
+INSERT ROOM VALUES ('101','912-9101','201411');
+INSERT ROOM VALUES ('102','912-9102','201412');
+INSERT ROOM VALUES ('103','912-9103','201413');
+INSERT ROOM VALUES ('104','912-9104','201414');
+INSERT ROOM VALUES ('105','912-9105','201415');
+INSERT ROOM VALUES ('106','912-9106','201416');
+INSERT ROOM VALUES ('107','912-9107','201417');
+INSERT ROOM VALUES ('108','912-9108','201418');
+INSERT ROOM VALUES ('109','912-9109','201419');
+INSERT ROOM VALUES ('110','912-9110','201420');
+INSERT ROOM VALUES ('111','912-9111','201421');
+INSERT ROOM VALUES ('112','912-9112','201422');
+INSERT ROOM VALUES ('113','912-9113','201423');
+INSERT ROOM VALUES ('114','912-9114','201424');
+INSERT ROOM VALUES ('115','912-9115','201425');
+
+
+INSERT PATIENT VALUES ('950712-1056821','박환일','22','M','999011','201310','101');
+INSERT PATIENT VALUES ('950612-1056822','박환이','22','M','999012','201310','106');
+INSERT PATIENT VALUES ('940512-1056823','박환삼','23','M','999013','201312','106');
+INSERT PATIENT VALUES ('940412-1056824','박환사','23','M','999014','201313','102');
+INSERT PATIENT VALUES ('930312-1056825','박환오','24','M','999015','201322','102');
+INSERT PATIENT VALUES ('930212-1056826','박환육','24','M','999016','201314','103');
+INSERT PATIENT VALUES ('920112-1056827','박환칠','25','M','999017','201321','103');
+INSERT PATIENT VALUES ('920713-1056828','박환팔','25','M','999018','201320','104');
+INSERT PATIENT VALUES ('910714-1056829','박환구','26','M','999019','201331','104');
+INSERT PATIENT VALUES ('910715-1056830','박환십','26','M','999020','201327','109');
+INSERT PATIENT VALUES ('900716-1056831','박환십일','27','M','999021','201329','109');
+INSERT PATIENT VALUES ('900714-1056832','박환십이','27','M','999022','201317','112');
+INSERT PATIENT VALUES ('890812-1056833','박환십삼','28','M','999023','201315','112');
+INSERT PATIENT VALUES ('891230-1056834','박환십사','28','M','999024','201336','113');
+INSERT PATIENT VALUES ('870212-1056835','박환십오','30','M','999025','201338','113');
+INSERT PATIENT VALUES ('830612-2056821','여환일','34','F','999111','201330','101');
+INSERT PATIENT VALUES ('830612-2056822','여환이','34','F','999112','201331','105');
+INSERT PATIENT VALUES ('840612-2056823','여환삼','33','F','999113','201332','105');
+INSERT PATIENT VALUES ('840612-2056824','여환사','33','F','999114','201333','106');
+INSERT PATIENT VALUES ('850612-2056825','여환오','32','F','999115','201334','107');
+INSERT PATIENT VALUES ('850612-2056826','여환육','32','F','999116','201335','107');
+INSERT PATIENT VALUES ('860612-2056827','여환칠','31','F','999117','201336','108');
+INSERT PATIENT VALUES ('860612-2056828','여환팔','31','F','999118','201337','108');
+INSERT PATIENT VALUES ('930612-2056829','여환구','24','F','999119','201338','109');
+INSERT PATIENT VALUES ('930612-2056830','여환십','24','F','999120','201339','110');
+INSERT PATIENT VALUES ('920612-2056831','여환십일','25','F','999121','201320','110');
+INSERT PATIENT VALUES ('920612-2056832','여환십이','25','F','999122','201321','111');
+INSERT PATIENT VALUES ('910612-2056833','여환십삼','26','F','999123','201322','111');
+INSERT PATIENT VALUES ('910612-2056834','여환십사','26','F','999124','201323','114');
+INSERT PATIENT VALUES ('900612-2056835','여환십오','27','F','999125','201324','115');
+
+
+INSERT manage_n_p VALUES ('201410','950712-1056821');
+INSERT manage_n_p VALUES ('201411','950612-1056822');
+INSERT manage_n_p VALUES ('201412','940512-1056823');
+INSERT manage_n_p VALUES ('201413','940412-1056824');
+INSERT manage_n_p VALUES ('201414','930312-1056825');
+INSERT manage_n_p VALUES ('201415','930212-1056826');
+INSERT manage_n_p VALUES ('201416','920112-1056827');
+INSERT manage_n_p VALUES ('201417','920713-1056828');
+INSERT manage_n_p VALUES ('201418','910714-1056829');
+INSERT manage_n_p VALUES ('201419','910715-1056830');
+INSERT manage_n_p VALUES ('201420','900716-1056831');
+INSERT manage_n_p VALUES ('201421','900714-1056832');
+INSERT manage_n_p VALUES ('201422','890812-1056833');
+INSERT manage_n_p VALUES ('201423','891230-1056834');
+INSERT manage_n_p VALUES ('201424','870212-1056835');
+INSERT manage_n_p VALUES ('201425','830612-2056821');
+INSERT manage_n_p VALUES ('201426','830612-2056822');
+INSERT manage_n_p VALUES ('201427','840612-2056823');
+INSERT manage_n_p VALUES ('201428','840612-2056824');
+INSERT manage_n_p VALUES ('201429','850612-2056825');
+INSERT manage_n_p VALUES ('201410','850612-2056826');
+INSERT manage_n_p VALUES ('201411','860612-2056827');
+INSERT manage_n_p VALUES ('201412','860612-2056828');
+INSERT manage_n_p VALUES ('201413','930612-2056829');
+INSERT manage_n_p VALUES ('201414','930612-2056830');
+INSERT manage_n_p VALUES ('201415','920612-2056831');
+INSERT manage_n_p VALUES ('201420','920612-2056832');
+INSERT manage_n_p VALUES ('201421','910612-2056833');
+INSERT manage_n_p VALUES ('201422','910612-2056834');
+INSERT manage_n_p VALUES ('201423','900612-2056835');
+
+
+INSERT SURGERY VALUES ('9901','제1수술','950712-1056821');
+INSERT SURGERY VALUES ('9902','제2수술','950612-1056822');
+INSERT SURGERY VALUES ('9903','제3수술','940512-1056823');
+INSERT SURGERY VALUES ('9904','제4수술','940412-1056824');
+INSERT SURGERY VALUES ('9905','제5수술','930312-1056825');
+INSERT SURGERY VALUES ('9906','제6수술','930212-1056826');
+INSERT SURGERY VALUES ('9907','제7수술','920112-1056827');
+INSERT SURGERY VALUES ('9908','제8수술','920713-1056828');
+INSERT SURGERY VALUES ('9909','제9수술','910714-1056829');
+INSERT SURGERY VALUES ('9910','제10수술','910715-1056830');
+INSERT SURGERY VALUES ('9911','제11수술','900716-1056831');
+INSERT SURGERY VALUES ('9912','제12수술','900714-1056832');
+INSERT SURGERY VALUES ('9913','제13수술','890812-1056833');
+INSERT SURGERY VALUES ('9914','제14수술','891230-1056834');
+INSERT SURGERY VALUES ('9915','제15수술','870212-1056835');
+INSERT SURGERY VALUES ('9916','제16수술','830612-2056821');
+INSERT SURGERY VALUES ('9917','제17수술','830612-2056822');
+INSERT SURGERY VALUES ('9918','제18수술','840612-2056823');
+INSERT SURGERY VALUES ('9919','제19수술','840612-2056824');
+INSERT SURGERY VALUES ('9920','제20수술','850612-2056825');
+INSERT SURGERY VALUES ('9921','제21수술','850612-2056826');
+INSERT SURGERY VALUES ('9922','제22수술','860612-2056827');
+INSERT SURGERY VALUES ('9923','제23수술','860612-2056828');
+INSERT SURGERY VALUES ('9924','제24수술','930612-2056829');
+INSERT SURGERY VALUES ('9925','제25수술','930612-2056830');
+
+
+UPDATE DOCTOR SET surgery_num = '9901' WHERE doctor_id = '201339';
+UPDATE DOCTOR SET surgery_num = '9902' WHERE doctor_id = '201338';
+UPDATE DOCTOR SET surgery_num = '9903' WHERE doctor_id = '201337';
+UPDATE DOCTOR SET surgery_num = '9904' WHERE doctor_id = '201336';
+UPDATE DOCTOR SET surgery_num = '9905' WHERE doctor_id = '201335';
+UPDATE DOCTOR SET surgery_num = '9906' WHERE doctor_id = '201334';
+UPDATE DOCTOR SET surgery_num = '9907' WHERE doctor_id = '201333';
+UPDATE DOCTOR SET surgery_num = '9908' WHERE doctor_id = '201332';
+UPDATE DOCTOR SET surgery_num = '9909' WHERE doctor_id = '201331';
+UPDATE DOCTOR SET surgery_num = '9910' WHERE doctor_id = '201330';
+UPDATE DOCTOR SET surgery_num = '9911' WHERE doctor_id = '201329';
+UPDATE DOCTOR SET surgery_num = '9912' WHERE doctor_id = '201328';
+UPDATE DOCTOR SET surgery_num = '9913' WHERE doctor_id = '201327';
+UPDATE DOCTOR SET surgery_num = '9914' WHERE doctor_id = '201326';
+UPDATE DOCTOR SET surgery_num = '9915' WHERE doctor_id = '201325';
+UPDATE DOCTOR SET surgery_num = '9916' WHERE doctor_id = '201324';
+UPDATE DOCTOR SET surgery_num = '9917' WHERE doctor_id = '201323';
+UPDATE DOCTOR SET surgery_num = '9918' WHERE doctor_id = '201322';
+UPDATE DOCTOR SET surgery_num = '9919' WHERE doctor_id = '201321';
+UPDATE DOCTOR SET surgery_num = '9920' WHERE doctor_id = '201320';
+UPDATE DOCTOR SET surgery_num = '9921' WHERE doctor_id = '201310';
+UPDATE DOCTOR SET surgery_num = '9922' WHERE doctor_id = '201311';
+UPDATE DOCTOR SET surgery_num = '9923' WHERE doctor_id = '201312';
+UPDATE DOCTOR SET surgery_num = '9924' WHERE doctor_id = '201313';
+UPDATE DOCTOR SET surgery_num = '9925' WHERE doctor_id = '201314';
+
+
+INSERT SURGE_RES VALUES('9901','16.06.20','3','4');
+INSERT SURGE_RES VALUES('9902','16.06.19','7','6');
+INSERT SURGE_RES VALUES('9903','16.06.18','5','7');
+INSERT SURGE_RES VALUES('9904','16.06.17','2','8');
+INSERT SURGE_RES VALUES('9905','16.05.20','1','8');
+INSERT SURGE_RES VALUES('9906','16.04.20','2','7');
+INSERT SURGE_RES VALUES('9907','16.03.20','7','8');
+INSERT SURGE_RES VALUES('9908','16.02.20','8','9');
+INSERT SURGE_RES VALUES('9909','16.01.20','13','9');
+INSERT SURGE_RES VALUES('9910','15.09.21','12','8');
+INSERT SURGE_RES VALUES('9911','15.09.12','10','7');
+INSERT SURGE_RES VALUES('9912','15.06.13','10','5');
+INSERT SURGE_RES VALUES('9913','15.07.07','12','5');
+INSERT SURGE_RES VALUES('9914','15.08.23','7','1');
+INSERT SURGE_RES VALUES('9915','15.09.21','8','2');
+INSERT SURGE_RES VALUES('9916','15.10.18','9','1');
+INSERT SURGE_RES VALUES('9917','15.11.05','9','6');
+INSERT SURGE_RES VALUES('9918','14.12.14','4','4');
+INSERT SURGE_RES VALUES('9919','14.04.23','5','3');
+INSERT SURGE_RES VALUES('9920','14.05.12','7','3');
+INSERT SURGE_RES VALUES('9921','14.06.17','6','4');
+INSERT SURGE_RES VALUES('9922','14.07.09','12','9');
+INSERT SURGE_RES VALUES('9923','14.08.14','15','4');
+INSERT SURGE_RES VALUES('9924','13.06.12','13','8');
+INSERT SURGE_RES VALUES('9925','08.06.02','5','6');
