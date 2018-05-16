@@ -5,7 +5,7 @@
 
 ## 2. 분야
 ### 1. AI (Artificial Intelligence) & ML (Machine Learning)
- - 2017년 1학기 성균관대학교 이지형 교수님 인공지능, 2018년 1학기 성균관대학교 이지형 교수님 머신러닝 수업.
+ - 2017년 1학기 성균관대학교 이지형 교수님 인공지능 수업, 2018년 1학기 성균관대학교 이지형 교수님 머신러닝 수업.
 
    (1) Solving 8-puzzle problems using BFS and DFS
 
@@ -51,4 +51,9 @@
  
    (1) Hospital Database Construction
 
-### 6. 
+### 6. Security Engineering
+ - 2018년 1학기 김형식교수님 보안공학 수업.
+ 
+   (1) Writing a password cracker
+   
+   (2) Automated analysis of the Diffie Hellman key agreement protocol
